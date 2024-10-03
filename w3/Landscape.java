@@ -37,9 +37,9 @@ public class Landscape {
 	 * @param columns the number of columns in the Landscape
 	 * @param chance  the probability each individual Cell is initially alive
 	 */
-	public Landscape(int rows, int columns, double chance) {
+	public Landscape(int rows, int cols, double chance) {
 		this.rand = new Random();
-		this.landscape = new Cell[rows][columns];
+		this.landscape = new Cell[rows][cols];
 		this.historicalLandscapes = new LinkedList<>();
 		for (int iterator = 0; iterator < 20; iterator++) {
 			historicalLandscapes.add(landscape);
@@ -48,6 +48,11 @@ public class Landscape {
 		reset();
 	}
 
+	/**
+	 * Constructs a Landscape using a predefined pattern as boolean grid
+	 *
+	 * @param grid    the pre-defined grid
+	 */
 	public Landscape(boolean[][] grid) {
 		this(grid.length, grid[0].length, 0);
 		int rows = grid.length;
@@ -59,6 +64,11 @@ public class Landscape {
 		}
 	}
 
+	/**
+	 * Constructs a Landscape using a predefined pattern as an array of String
+	 *
+	 * @param grid    the pre-defined grid
+	 */
 	public Landscape(String[] grid) {
 		this(grid.length, grid[0].length(), 0);
 		int rows = grid.length;
@@ -133,14 +143,18 @@ public class Landscape {
 	 */
 	public ArrayList<Cell> getNeighbors(int row, int col) {
 		ArrayList<Cell> neighbors = new ArrayList<>();
-		int[][] offsets = {{-1, -1}, {-1, 0}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}}; // clockwise
-		for (int[] pair : offsets) {
-			int nRow = row + pair[0];
-			int nCol = col + pair[1];
-			if ((nRow < 0 || nRow >= this.landscape.length) ||
-			    (nCol < 0 || nCol >= this.landscape[0].length))
-				continue;
-			neighbors.add(this.landscape[nRow][nCol]);
+		int[] offsets = {-1, 0, 1}; // clockwise
+		for (int x : offsets) {
+			for (int y : offsets) {
+				if (x == 0 && y == 0)
+					continue;
+				int nRow = row + pair[0];
+				int nCol = col + pair[1];
+				if ((nRow < 0 || nRow >= this.landscape.length) ||
+				    (nCol < 0 || nCol >= this.landscape[0].length))
+					continue;
+				neighbors.add(this.landscape[nRow][nCol]);
+			}
 		}
 		return neighbors;
 	}
@@ -151,37 +165,61 @@ public class Landscape {
 	public void advance() {
 		int rows = this.landscape.length;
 		int cols = this.landscape[0].length;
-		Cell[][] nLandscape = new Cell[rows][cols];
+        // init the temporary, editable landscape
+		Cell[][] workLandscape = new Cell[rows][cols];
 
-        this.historicalLandscapes.poll();
+        // remove the oldest historicalLandscape from the head of the queue
+		this.historicalLandscapes.poll();
+        // add the latest (current) landscape to the tail of the queue
 		this.historicalLandscapes.offer(this.landscape);
 
 		// creates a copy of the currentLandscape;
 		for (int row = 0; row < rows; row++) {
 			for (int col = 0; col < cols; col++) {
-				nLandscape[row][col] = new Cell(this.landscape[row][col].getAlive());
+				workLandscape[row][col] = new Cell(this.landscape[row][col].getAlive());
 			}
 		}
+        // update the temporary work landscape
 		for (int row = 0; row < rows; row++) {
 			for (int col = 0; col < cols; col++) {
-				nLandscape[row][col].updateState(getNeighbors(row, col));
+				workLandscape[row][col].updateState(getNeighbors(row, col));
 			}
 		}
-		this.landscape = nLandscape;
+        // update the current landscape
+		this.landscape = workLandscape;
 	}
 
-	public void setCellAlive(double x, double y) {
+	/**
+	 * Set the Cell equivalent to point (x,y) to Alive
+	 *
+	 * @param x The x (horizontal) position relative to the window's width, range from 0.0 to 1.0
+     * @param y The y (vertical) position relative to the window's height, range from 0.0 to 1.0
+	 */
+	public void setCellAlive(double , double y) {
+        int row = (int)Math.floor(x * getRows());
 		int col = (int)Math.floor(y * getCols());
-		int row = (int)Math.floor(x * getRows());
-        if (row < 0 || row >= getRows() || col < 0 || col > getCols())
-            return;
+		if (row < 0 || row >= getRows() || col < 0 || col > getCols())
+			return;
 		this.landscape[row][col].setAlive(true);
 	}
 
+	/**
+	 * Count how many alive cells are there on the board
+	 *
+     * @return The number of alive cells on the board
+	 */
 	public int getSum() {
 		return Arrays.stream(this.landscape).flatMap(Arrays::stream).mapToInt(i -> i.getAlive() ? 1 : 0).sum();
 	}
 
+	/**
+	 * Helper function to draw a given Cell[][] grid
+	 *
+     * @param g the Java Graphics to draw to 
+     * @param scale size of each cell
+     * @param scape the Cell[][] grid to be drawn
+     * @param color color of the scape
+	 */
 	public void drawScape(Graphics g, int scale, Cell[][] scape, Color color) {
 		g.setColor(color);
 		for (int x = 0; x < getRows(); x++) {
@@ -203,6 +241,8 @@ public class Landscape {
 	public void draw(Graphics g, int scale) {
 		int redness = 0;
 		for (Cell[][] scape : historicalLandscapes) {
+			if (scape[0][0] == null)
+				continue;
 			redness = (redness + 10 < 255 ? redness + 10 : 255);
 			Color color = new Color(redness, 0, 0);
 			drawScape(g, scale, scape, color);
