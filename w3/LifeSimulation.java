@@ -31,16 +31,13 @@ public class LifeSimulation {
 		        "_____________________", //
 		};
 
-		for (int size = 5; size < 50; size++) {
-			for (double chance = 0; chance < 1; chance += 0.05) {
-				Landscape scape = new Landscape(size, size, chance);
+			for (double chance = 0; chance <= 1; chance += 0.05) {
+				Landscape scape = new Landscape(128, 128, chance);
                 System.out.print(scape.getSum() + " ");
 				for (int iteration = 0; iteration < 1000; iteration++) {
 					scape.advance();
 				}
-                System.out.print(scape.getSum() + " ");
+                System.out.print(scape.getSum() + " \n");
 			}
-            System.out.println("");
-		}
 	}
 }

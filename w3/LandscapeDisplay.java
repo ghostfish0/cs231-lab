@@ -14,11 +14,12 @@
   but are free to do so if they wish.
 */
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -54,14 +55,30 @@ public class LandscapeDisplay {
 
 		// create a panel in which to display the Landscape
 		// put a buffer of two rows around the display grid
-		this.canvas = new LandscapePanel(
-            (int)(this.scape.getCols()) * this.gridScale,
-             (int)(this.scape.getRows()) * this.gridScale);
+		this.canvas = new LandscapePanel((int)(this.scape.getCols()) * this.gridScale,
+				 (int)(this.scape.getRows()) * this.gridScale);
 
 		// add the panel to the window, layout, and display
 		this.win.add(this.canvas);
 		this.win.pack();
 		this.win.setVisible(true);
+
+		// Add mouse listener to handle mouse events
+		this.win.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				scape.setCellAlive((double)e.getX() / win.getWidth(),
+					   (double)e.getY() / win.getHeight());
+			}
+		});
+
+		this.win.addMouseMotionListener(new MouseAdapter() {
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				scape.setCellAlive((double)e.getX() / win.getWidth(),
+					   (double)e.getY() / win.getHeight());
+			}
+		});
 	}
 
 	/**
@@ -106,7 +123,7 @@ public class LandscapeDisplay {
 		public LandscapePanel(int width, int height) {
 			super();
 			this.setPreferredSize(new Dimension(width, height));
-			this.setBackground(Color.GREEN);
+			this.setBackground(Color.BLACK);
 		}
 
 		/**
@@ -129,16 +146,20 @@ public class LandscapeDisplay {
 	public void repaint() { this.win.repaint(); }
 
 	public static void main(String[] args) throws InterruptedException {
-        int width = 100;
-        int height = 100;
-		Landscape scape = new Landscape(width, height, .25);
+		int width = 100;
+		int height = 100;
+		Landscape scape = new Landscape(width, height, 0);
 
 		LandscapeDisplay display = new LandscapeDisplay(scape, 1200 / (width + height));
 
 		// Uncomment below when advance() has been finished
+        int count = 0;
 		while (true) {
-			Thread.sleep(250);
-			scape.advance();
+			Thread.sleep(20);
+            if (count++ > 2) {
+                scape.advance();
+                count = 0;
+            }
 			display.repaint();
 		}
 	}

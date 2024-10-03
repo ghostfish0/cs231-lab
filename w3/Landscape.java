@@ -2,6 +2,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Random;
 
 public class Landscape {
@@ -10,6 +12,7 @@ public class Landscape {
 	 * The underlying grid of Cells for Conway's Game
 	 */
 	private Cell[][] landscape;
+	private Queue<Cell[][]> historicalLandscapes;
 	private Random rand;
 
 	/**
@@ -37,14 +40,18 @@ public class Landscape {
 	public Landscape(int rows, int columns, double chance) {
 		this.rand = new Random();
 		this.landscape = new Cell[rows][columns];
+		this.historicalLandscapes = new LinkedList<>();
+		for (int iterator = 0; iterator < 20; iterator++) {
+			historicalLandscapes.add(landscape);
+		}
 		this.initialChance = chance;
 		reset();
 	}
 
 	public Landscape(boolean[][] grid) {
+		this(grid.length, grid[0].length, 0);
 		int rows = grid.length;
 		int cols = grid[0].length;
-		this.landscape = new Cell[rows][cols];
 		for (int row = 0; row < rows; row++) {
 			for (int col = 0; col < cols; col++) {
 				this.landscape[row][col] = new Cell(grid[row][col]);
@@ -53,9 +60,9 @@ public class Landscape {
 	}
 
 	public Landscape(String[] grid) {
+		this(grid.length, grid[0].length(), 0);
 		int rows = grid.length;
 		int cols = grid[0].length();
-		this.landscape = new Cell[rows][cols];
 		for (int row = 0; row < rows; row++) {
 			for (int col = 0; col < cols; col++) {
 				this.landscape[row][col] = new Cell(grid[row].charAt(col) == 'x');
@@ -146,6 +153,9 @@ public class Landscape {
 		int cols = this.landscape[0].length;
 		Cell[][] nLandscape = new Cell[rows][cols];
 
+        this.historicalLandscapes.poll();
+		this.historicalLandscapes.offer(this.landscape);
+
 		// creates a copy of the currentLandscape;
 		for (int row = 0; row < rows; row++) {
 			for (int col = 0; col < cols; col++) {
@@ -160,8 +170,27 @@ public class Landscape {
 		this.landscape = nLandscape;
 	}
 
+	public void setCellAlive(double x, double y) {
+		int col = (int)Math.floor(y * getCols());
+		int row = (int)Math.floor(x * getRows());
+        if (row < 0 || row >= getRows() || col < 0 || col > getCols())
+            return;
+		this.landscape[row][col].setAlive(true);
+	}
+
 	public int getSum() {
 		return Arrays.stream(this.landscape).flatMap(Arrays::stream).mapToInt(i -> i.getAlive() ? 1 : 0).sum();
+	}
+
+	public void drawScape(Graphics g, int scale, Cell[][] scape, Color color) {
+		g.setColor(color);
+		for (int x = 0; x < getRows(); x++) {
+			for (int y = 0; y < getCols(); y++) {
+				if (scape[x][y].getAlive()) {
+					g.fillRect(x * scale, y * scale, scale, scale);
+				}
+			}
+		}
 	}
 
 	/**
@@ -172,15 +201,13 @@ public class Landscape {
 	 * @param scale the scale of the representation of this Cell
 	 */
 	public void draw(Graphics g, int scale) {
-		g.setColor(Color.WHITE);
-		for (int x = 0; x < getRows(); x++) {
-			for (int y = 0; y < getCols(); y++) {
-				if (this.landscape[x][y].getAlive()) {
-					g.fillRect(x * scale + 1, y * scale + 1, scale - 1,
-					           scale - 1);
-				}
-			}
+		int redness = 0;
+		for (Cell[][] scape : historicalLandscapes) {
+			redness = (redness + 10 < 255 ? redness + 10 : 255);
+			Color color = new Color(redness, 0, 0);
+			drawScape(g, scale, scape, color);
 		}
+		drawScape(g, scale, this.landscape, Color.WHITE);
 	}
 
 	public static void main(String[] args) {}
