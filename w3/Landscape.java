@@ -37,16 +37,28 @@ public class Landscape {
 	public Landscape(int rows, int columns, double chance) {
 		this.rand = new Random();
 		this.landscape = new Cell[rows][columns];
-		reset(chance);
+		this.initialChance = chance;
+		reset();
 	}
 
-	public Landscape(String[] init) {
-		int rows = init.length;
-		int cols = init[0].length();
+	public Landscape(boolean[][] grid) {
+		int rows = grid.length;
+		int cols = grid[0].length;
 		this.landscape = new Cell[rows][cols];
 		for (int row = 0; row < rows; row++) {
 			for (int col = 0; col < cols; col++) {
-				this.landscape[row][col] = new Cell(init[row].charAt(col) == 'x');
+				this.landscape[row][col] = new Cell(grid[row][col]);
+			}
+		}
+	}
+
+	public Landscape(String[] grid) {
+		int rows = grid.length;
+		int cols = grid[0].length();
+		this.landscape = new Cell[rows][cols];
+		for (int row = 0; row < rows; row++) {
+			for (int col = 0; col < cols; col++) {
+				this.landscape[row][col] = new Cell(grid[row].charAt(col) == 'x');
 			}
 		}
 	}
@@ -55,20 +67,13 @@ public class Landscape {
 	 * Recreates the Landscape according to the specifications given
 	 * in its initial construction.
 	 */
-	public void reset() { reset(0); }
-
-	/**
-	 * Recreates the Landscape according to the specifications given
-	 * in its initial construction. Randomize the initial landscape
-	 *
-	 * @param chance  the probability each individual Cell is initially alive
-	 */
-	public void reset(double chance) {
+	public void reset() {
 		int rows = this.landscape.length;
 		int cols = this.landscape[0].length;
 		for (int row = 0; row < rows; row++) {
 			for (int col = 0; col < cols; col++) {
-				this.landscape[row][col] = new Cell(this.rand.nextDouble() < chance);
+				this.landscape[row][col] =
+				        new Cell(this.rand.nextDouble() < this.initialChance);
 			}
 		}
 	}
@@ -120,7 +125,7 @@ public class Landscape {
 	 * @return an ArrayList of the neighboring Cells to the specified location
 	 */
 	public ArrayList<Cell> getNeighbors(int row, int col) {
-		ArrayList<Cell> neighbors = new ArrayList<Cell>();
+		ArrayList<Cell> neighbors = new ArrayList<>();
 		int[][] offsets = {{-1, -1}, {-1, 0}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}}; // clockwise
 		for (int[] pair : offsets) {
 			int nRow = row + pair[0];
@@ -139,7 +144,6 @@ public class Landscape {
 	public void advance() {
 		int rows = this.landscape.length;
 		int cols = this.landscape[0].length;
-		int[][] sums = new int[rows][cols];
 		Cell[][] nLandscape = new Cell[rows][cols];
 
 		// creates a copy of the currentLandscape;
@@ -157,10 +161,7 @@ public class Landscape {
 	}
 
 	public int getSum() {
-		return Arrays.stream(this.landscape)
-		        .flatMap(Arrays::stream)
-		        .mapToInt(i -> i.getAlive() ? 1 : 0)
-		        .sum();
+		return Arrays.stream(this.landscape).flatMap(Arrays::stream).mapToInt(i -> i.getAlive() ? 1 : 0).sum();
 	}
 
 	/**
@@ -171,10 +172,13 @@ public class Landscape {
 	 * @param scale the scale of the representation of this Cell
 	 */
 	public void draw(Graphics g, int scale) {
+		g.setColor(Color.WHITE);
 		for (int x = 0; x < getRows(); x++) {
 			for (int y = 0; y < getCols(); y++) {
-				g.setColor(getCell(x, y).getAlive() ? Color.GREEN : Color.gray);
-				g.fillRect(x * scale + 1, y * scale + 1, scale - 1, scale - 1);
+				if (this.landscape[x][y].getAlive()) {
+					g.fillRect(x * scale + 1, y * scale + 1, scale - 1,
+					           scale - 1);
+				}
 			}
 		}
 	}
