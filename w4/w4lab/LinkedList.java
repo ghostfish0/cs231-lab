@@ -12,6 +12,17 @@ public class LinkedList<T> {
 		public T getData() { return this.data; }
 		public void setNext(Node n) { this.next = n; }
 		public Node getNext() { return this.next; }
+		public Node getNext(int index) {
+			if (index < 0 || this == null)
+				return null;
+			Node current = this;
+			for (int i = 0; i < index; i++) {
+				current = current.getNext();
+				if (current == null)
+					return null;
+			}
+			return current;
+		}
 		public String toString() { return "[" + this.data + "] ->"; }
 	}
 	private Node head;
@@ -32,7 +43,7 @@ public class LinkedList<T> {
 			return null;
 		String str = "";
 		Node curr = this.head;
-		for (int index = 0; index < this.size - 1; index++) {
+		while (curr != null) {
 			str += curr;
 			curr = curr.getNext();
 		}
@@ -51,38 +62,52 @@ public class LinkedList<T> {
 			add(item);
 			return;
 		}
-		Node currentNode = this.head;
+		Node current = this.head;
 		Node newNode = new Node(item);
 		int currentIndex = 0;
 		for (currentIndex = 0; currentIndex < index - 1; currentIndex++) {
-			currentNode = currentNode.getNext();
+			current = current.getNext();
 		}
-		newNode.setNext(currentNode.getNext());
-		currentNode.setNext(newNode);
+		newNode.setNext(current.getNext());
+		current.setNext(newNode);
 		this.size++;
 	}
 	public boolean contains(Object o) {
-		Node currentNode = this.head;
-		while (currentNode != null) {
-            T item = currentNode.getData();
-            if (item.equals(o))
-                return true;
-			currentNode = currentNode.getNext();
+		Node current = this.head;
+		while (current != null) {
+			T item = current.getData();
+			if (item.equals(o))
+				return true;
+			current = current.getNext();
 		}
 		return false;
 	}
 	public T get(int index) {
-		if (index > this.size)
+		if (index < 0 || index >= this.size)
 			return null;
-		Node currentNode = this.head;
-		for (int i = 0; i < index; i++) {
-			currentNode = currentNode.getNext();
-		}
-		return currentNode.getData();
+		return this.head.getNext(index).getData();
 	}
-    public T remove() {
-        Node head = new Node(this.head);
-    }
+	public T remove() {
+		T data = this.head.getData();
+		this.head = this.head.getNext();
+		return data;
+	}
+	public T remove(int index) {
+        Node current = this.head.getNext(index - 1);
+		T data = current.getNext().getData();
+		current.setNext(current.getNext(2));
+		return data;
+	}
+	public static void main(String[] args) {
+		LinkedList<Integer> list = new LinkedList<>();
+		list.add(1);
+		list.add(1);
+		list.add(2);
+		list.add(3);
+        list.add(5);
+        list.add(7);
+		System.out.println(list);
+        System.out.println(list.remove(2));
+        System.out.println(list);
+	}
 }
-
-// not al
