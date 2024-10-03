@@ -1,16 +1,3 @@
-import java.util.Arrays;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
 public class LifeSimulation {
 	public static void main(String[] args) throws InterruptedException {
 		// Landscape scape = new Landscape(100, 100, .25);
