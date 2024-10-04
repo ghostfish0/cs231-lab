@@ -1,6 +1,6 @@
 import java.util.Iterator; // defines the Iterator interface
 
-public class LinkedList<T> {
+public class LinkedList<T> implements Iterable<T> {
 	public class Node {
 		private Node next;
 		private T data;
@@ -25,6 +25,21 @@ public class LinkedList<T> {
 		}
 		public String toString() { return "[" + this.data + "] ->"; }
 	}
+	private class LLIterator implements Iterator<T> {
+
+		Node head;
+
+		public LLIterator(Node head) { this.head = head; }
+		public boolean hasNext() { return this.head != null; }
+		public T next() {
+			if (!hasNext())
+				return null;
+			T data = head.getData();
+			head = head.getNext();
+			return data;
+		}
+		public void remove() {}
+	}
 	private Node head;
 	private int size;
 
@@ -32,7 +47,7 @@ public class LinkedList<T> {
 		this.head = null;
 		this.size = 0;
 	}
-	public LinkedList(Object o) {}
+	public Iterator<T> iterator() { return new LLIterator(this.head); }
 	public int size() { return this.size; }
 	public void clear() {
 		this.head = null;
@@ -92,6 +107,8 @@ public class LinkedList<T> {
 		return data;
 	}
 	public T remove(int index) {
+        if (index == 0)
+            return remove();
 		Node current = this.head.getNext(index - 1);
 		T data = current.getNext().getData();
 		current.setNext(current.getNext(2));
@@ -118,20 +135,8 @@ public class LinkedList<T> {
 
 	public static void main(String[] args) {
 		LinkedList<Integer> list = new LinkedList<>();
-		LinkedList<Integer> list2 = new LinkedList<>();
-		list.add(1);
 		list.add(1);
 		list.add(2);
-		list.add(3);
-		list.add(5);
-		list2.add(1);
-		list2.add(1);
-		list2.add(2);
-		list2.add(3);
-		list2.add(5);
-        list2.add(5);
-		System.out.println(list);
-		System.out.println(list2);
-		System.out.println(list.equals(list2));
+        list.add(3);
 	}
 }
