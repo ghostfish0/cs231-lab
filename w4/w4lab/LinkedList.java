@@ -32,6 +32,7 @@ public class LinkedList<T> {
 		this.head = null;
 		this.size = 0;
 	}
+	public LinkedList(Object o) {}
 	public int size() { return this.size; }
 	public void clear() {
 		this.head = null;
@@ -62,14 +63,12 @@ public class LinkedList<T> {
 			add(item);
 			return;
 		}
-		Node current = this.head;
+		Node curr = this.head;
 		Node newNode = new Node(item);
-		int currentIndex = 0;
-		for (currentIndex = 0; currentIndex < index - 1; currentIndex++) {
-			current = current.getNext();
-		}
-		newNode.setNext(current.getNext());
-		current.setNext(newNode);
+		for (int iterator = 0; iterator < iterator - 1; iterator++)
+			curr = curr.getNext();
+		newNode.setNext(curr.getNext());
+		curr.setNext(newNode);
 		this.size++;
 	}
 	public boolean contains(Object o) {
@@ -93,21 +92,46 @@ public class LinkedList<T> {
 		return data;
 	}
 	public T remove(int index) {
-        Node current = this.head.getNext(index - 1);
+		Node current = this.head.getNext(index - 1);
 		T data = current.getNext().getData();
 		current.setNext(current.getNext(2));
 		return data;
 	}
+
+	public boolean equals(Object o) {
+		if (!(o instanceof LinkedList)) {
+			return false;
+		}
+		@SuppressWarnings("unchecked") LinkedList<T> oButLinkedList = (LinkedList<T>)o;
+
+		Node thisCurr = this.head;
+		Node oCurr = oButLinkedList.head;
+		while (thisCurr != null && oCurr != null) {
+			if (thisCurr.getData() != oCurr.getData()) {
+				return false;
+			}
+			thisCurr = thisCurr.getNext();
+			oCurr = oCurr.getNext();
+		}
+		return true;
+	}
+
 	public static void main(String[] args) {
 		LinkedList<Integer> list = new LinkedList<>();
+		LinkedList<Integer> list2 = new LinkedList<>();
 		list.add(1);
 		list.add(1);
 		list.add(2);
 		list.add(3);
-        list.add(5);
-        list.add(7);
+		list.add(5);
+		list2.add(1);
+		list2.add(1);
+		list2.add(2);
+		list2.add(3);
+		list2.add(5);
+        list2.add(5);
 		System.out.println(list);
-        System.out.println(list.remove(2));
-        System.out.println(list);
+		System.out.println(list2);
+		System.out.println(list.equals(list2));
 	}
 }
