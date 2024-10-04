@@ -1,8 +1,8 @@
 import java.util.Iterator; // defines the Iterator interface
 
 public class LinkedList<T> implements Iterable<T> {
-	public class Node {
-		private Node next;
+	public static class Node<T> {
+		private Node<T> next;
 		private T data;
 
 		public Node(T item) {
@@ -10,12 +10,12 @@ public class LinkedList<T> implements Iterable<T> {
 			this.data = item;
 		}
 		public T getData() { return this.data; }
-		public void setNext(Node n) { this.next = n; }
-		public Node getNext() { return this.next; }
-		public Node getNext(int index) {
+		public void setNext(Node<T> n) { this.next = n; }
+		public Node<T> getNext() { return this.next; }
+		public Node<T> getNext(int index) {
 			if (index < 0 || this == null)
 				return null;
-			Node current = this;
+			Node<T> current = this;
 			for (int i = 0; i < index; i++) {
 				current = current.getNext();
 				if (current == null)
@@ -27,9 +27,9 @@ public class LinkedList<T> implements Iterable<T> {
 	}
 	private class LLIterator implements Iterator<T> {
 
-		Node head;
+		Node<T> head;
 
-		public LLIterator(Node head) { this.head = head; }
+		public LLIterator(Node<T> head) { this.head = head; }
 		public boolean hasNext() { return this.head != null; }
 		public T next() {
 			if (!hasNext())
@@ -40,7 +40,7 @@ public class LinkedList<T> implements Iterable<T> {
 		}
 		public void remove() {}
 	}
-	private Node head;
+	private Node<T> head;
 	private int size;
 
 	public LinkedList() {
@@ -58,7 +58,7 @@ public class LinkedList<T> implements Iterable<T> {
 		if (isEmpty())
 			return null;
 		String str = "";
-		Node curr = this.head;
+		Node<T> curr = this.head;
 		while (curr != null) {
 			str += curr;
 			curr = curr.getNext();
@@ -66,7 +66,7 @@ public class LinkedList<T> implements Iterable<T> {
 		return str;
 	}
 	public void add(T item) {
-		Node nHead = new Node(item);
+		Node<T> nHead = new Node<T>(item);
 		nHead.setNext(this.head);
 		this.head = nHead;
 		this.size++;
@@ -78,8 +78,8 @@ public class LinkedList<T> implements Iterable<T> {
 			add(item);
 			return;
 		}
-		Node curr = this.head;
-		Node newNode = new Node(item);
+		Node<T> curr = this.head;
+		Node<T> newNode = new Node<T>(item);
 		for (int iterator = 0; iterator < iterator - 1; iterator++)
 			curr = curr.getNext();
 		newNode.setNext(curr.getNext());
@@ -87,7 +87,7 @@ public class LinkedList<T> implements Iterable<T> {
 		this.size++;
 	}
 	public boolean contains(Object o) {
-		Node current = this.head;
+		Node<T> current = this.head;
 		while (current != null) {
 			T item = current.getData();
 			if (item.equals(o))
@@ -109,7 +109,7 @@ public class LinkedList<T> implements Iterable<T> {
 	public T remove(int index) {
         if (index == 0)
             return remove();
-		Node current = this.head.getNext(index - 1);
+		Node<T> current = this.head.getNext(index - 1);
 		T data = current.getNext().getData();
 		current.setNext(current.getNext(2));
 		return data;
@@ -121,8 +121,8 @@ public class LinkedList<T> implements Iterable<T> {
 		}
 		@SuppressWarnings("unchecked") LinkedList<T> oButLinkedList = (LinkedList<T>)o;
 
-		Node thisCurr = this.head;
-		Node oCurr = oButLinkedList.head;
+		Node<T> thisCurr = this.head;
+		Node<T> oCurr = oButLinkedList.head;
 		while (thisCurr != null && oCurr != null) {
 			if (thisCurr.getData() != oCurr.getData()) {
 				return false;
