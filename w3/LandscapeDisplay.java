@@ -180,7 +180,7 @@ public class LandscapeDisplay {
 		};
         // Uncomment to use sample grids
         //Landscape scape = new Landscape(pulsar);
-        Landscape scape = new Landscape(100, 100, 0.25);
+        Landscape scape = new Landscape(100, 100, 0);
         // fixed size window, 600 is the size of the longer length/width of the window
         LandscapeDisplay display = new LandscapeDisplay(scape, 600 / Math.max(scape.getRows(),scape.getCols()));
 
