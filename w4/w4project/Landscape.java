@@ -1,5 +1,12 @@
+/*
+  Tin Nguyen 
+  The Landscape class holds 
+  the width and height of the map,
+  an ArrayList of Agents 
+  and functions to modify and update this list
+*/
+
 import java.awt.Graphics;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -17,15 +24,15 @@ public class Landscape {
 	}
 	public int getHeight() { return this.height; }
 	public int getWidth() { return this.width; }
-	public void addAgent(Agent a) { agents.add(a); }
+	public void addAgent(Agent a) { this.agents.add(a); }
 	public String toString() { return "Width: " + this.width + ", Height: " + this.height + "\n" + agents.size() + " agents"; }
-	public static double distanceSquare(double ax, double ay, double bx, double by) {
+	public static double distanceSquared(double ax, double ay, double bx, double by) {
 		return (ax - bx) * (ax - bx) + (ay - by) * (ay - by);
 	}
-	public LinkedList<Agent> getNeighbors(double x0, double y0, double radius) {
+	protected LinkedList<Agent> getNeighbors(double x0, double y0, double radius) {
 		LinkedList<Agent> neighbors = new LinkedList<>();
 		for (Agent a : this.agents) {
-			if (distanceSquare(x0, y0, a.getX(), a.getY()) < radius * radius)
+			if (distanceSquared(x0, y0, a.getX(), a.getY()) < radius * radius)
 				neighbors.add(a);
 		}
 		return neighbors;
@@ -51,5 +58,8 @@ public class Landscape {
 		}
 		return cntMoved;
 	}
+    public void clearAgents() {
+        this.agents.clear();
+    }
 	public static void main(String[] args) {}
 }

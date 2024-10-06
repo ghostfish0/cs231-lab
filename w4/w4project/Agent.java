@@ -1,9 +1,17 @@
-import java.awt.Graphics;
+/*
+  Tin Nguyen 
+  The abstract Agent class common of the
+  SocialAgent and AntiSocialAgent class
+  Holds the Agent's x, y position and 
+  helper fields and functions to determine the Agent's behavior
+*/
 import java.util.Random;
+import java.awt.Graphics;
+import java.util.LinkedList;
 
 public abstract class Agent {
-	protected double x;
-	protected double y;
+	private double x;
+	private double y;
 	protected boolean moved;
 	protected int radius;
 	protected static Random rand;
@@ -36,6 +44,9 @@ public abstract class Agent {
 		this.y = y_;
 		this.moved = true;
 	}
+    protected LinkedList<Agent> getNeighbors(Landscape scape) {
+        return scape.getNeighbors(this.x, this.y, this.radius);
+    }
 	public boolean booleanUpdateState(Landscape scape) {
 		updateState(scape);
 		return this.moved;

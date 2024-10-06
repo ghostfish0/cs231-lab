@@ -133,7 +133,7 @@ public class LandscapeDisplay {
 
 		// Uncomment below when updateAgents() has been implemented
 		while (true) {
-			Thread.sleep(10);
+			Thread.sleep(50);
 			scape.updateAgents();
 			display.repaint();
 		}
