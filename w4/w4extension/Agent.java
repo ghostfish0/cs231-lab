@@ -20,5 +20,4 @@ public abstract class Agent {
 	public abstract String toString();
 	public abstract void exchange(double purchasePrice, boolean agreeable);
 	public abstract boolean attemptExchange(double p);
-    //public abstract void drawDistribution(Graphics p, LinkedList<Agent> agents);
 }

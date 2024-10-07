@@ -6,7 +6,7 @@ public class SocialAgentSimulation {
 
 		// Uncomment below when updateAgents() has been implemented
 		while (true) {
-			Thread.sleep(50);
+			Thread.sleep(60);
 			scape.updateAgents();
 			display.repaint();
 		}

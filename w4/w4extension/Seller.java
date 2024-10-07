@@ -6,7 +6,7 @@ public class Seller extends Agent {
 	public void exchange(double purchasePrice, boolean agreeable) {
 		double surplus = this.p - purchasePrice;
 		this.purchased = agreeable;
-		this.p += (agreeable ? 1 : -1) * rand.nextDouble(0.4, 0.6) * 0.05;
+		this.p += (agreeable ? 1 : -1) * rand.nextDouble(0.4, 0.6) * 0.005;
 	}
 	public boolean attemptExchange(double p) { return (p > this.p); }
 }

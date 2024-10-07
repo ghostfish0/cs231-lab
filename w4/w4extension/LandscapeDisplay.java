@@ -32,7 +32,7 @@ public class LandscapeDisplay {
 	protected JFrame win;
 	protected Landscape scape;
 	private LandscapePanel canvas;
-    private LandscapePanel distribution;
+	private LandscapePanel distribution;
 
 	/**
 	 * Initializes a display window for a Landscape.
@@ -47,12 +47,12 @@ public class LandscapeDisplay {
 		this.scape = scape;
 
 		// create a panel in which to display the Landscape
-		this.canvas = new LandscapePanel(this.scape.getWidth() + 50, this.scape.getHeight() + 50);
-        this.distribution = new LandscapePanel(50, this.scape.getHeight() + 50);
+		this.canvas = new LandscapePanel(this.scape.getWidth(), this.scape.getHeight());
+		this.distribution = new LandscapePanel(50, this.scape.getHeight() + 50);
 
 		// add the panel to the window, layout, and display
 		this.win.add(this.canvas, BorderLayout.CENTER);
-        this.win.add(this.distribution, BorderLayout.EAST);
+		// this.win.add(this.distribution, BorderLayout.EAST);
 		this.win.pack();
 		this.win.setVisible(true);
 	}
@@ -127,7 +127,7 @@ public class LandscapeDisplay {
 
 		// Uncomment below when updateAgents() has been implemented
 		while (true) {
-			Thread.sleep(50);
+			Thread.sleep(100);
 			scape.updateAgents();
 			display.repaint();
 		}
