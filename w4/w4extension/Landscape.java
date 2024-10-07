@@ -8,21 +8,30 @@ import java.util.Random;
 public class Landscape {
 	private int width;
 	private int height;
+	private int buyersCnt;
+	private int sellersCnt;
 	private ArrayList<Buyer> buyers;
 	private ArrayList<Seller> sellers;
 	private static Random rand;
 
 	public Landscape(int w, int h) {
-		this.width = w;
-		this.height = h;
-		this.buyers = new ArrayList<>();
-		this.sellers = new ArrayList<>();
-		rand = new Random();
+        this(w, h, 5);
 	}
 	public Landscape(int w, int h, int N) {
-		this(w, h);
-		for (int i = 0; i < N; i++) {
+		this(w, h, N, N);
+	}
+	public Landscape(int w, int h, int nB, int nS) {
+		this.width = w;
+		this.height = h;
+		this.buyersCnt = nB;
+		this.sellersCnt = nS;
+		this.buyers = new ArrayList<>();
+		this.sellers = new ArrayList<>();
+        rand = new Random();
+		for (int i = 0; i < this.buyersCnt; i++) {
 			this.buyers.add(new Buyer(rand.nextDouble()));
+		}
+		for (int i = 0; i < this.sellersCnt; i++) {
 			this.sellers.add(new Seller(rand.nextDouble()));
 		}
 	}
@@ -54,52 +63,79 @@ public class Landscape {
 			g.fillOval(x, y, 5, 5);
 		}
 	}
-	public void draw(Graphics g) {
-		int resolution = 50;
-		int[] xB = new int[resolution];
-		int[] xS = new int[resolution];
-		int[] y = new int[resolution];
-		for (int i = 0; i < resolution; i++) {
-			final double currP = 1.0 - 1.0 / resolution * i;
+	public int[] getXBs() {
+		int[] x = new int[buyersCnt];
+		for (int i = 0; i < buyersCnt; i++) {
+			final double currP = 1.0 - 1.0 / buyersCnt * i;
+			int numBuyers = (int)this.buyers.stream().filter(obj -> obj.getP() >= currP).count();
+			x[i] = screenY((double)numBuyers / this.buyers.size());
+		}
+		return x;
+	}
+	public int[] getXSs() {
+		int[] x = new int[sellersCnt];
+		for (int i = 0; i < sellersCnt; i++) {
+			final double currP = 1.0 - 1.0 / sellersCnt * i;
+			int numSellers = (int)this.sellers.stream().filter(obj -> obj.getP() <= currP).count();
+			x[i] = screenY((double)numSellers / this.sellers.size());
+		}
+		return x;
+	}
+	public int[] getYBs() {
+		int[] y = new int[buyersCnt];
+		for (int i = 0; i < buyersCnt; i++) {
+			final double currP = 1.0 / buyersCnt * i;
 			y[i] = screenY(currP);
 		}
-		g.setColor(Color.BLACK);
-		for (int i = 0; i < resolution; i++) {
-			final double currP = 1.0 / resolution * i;
-			int numBuyers = (int)this.buyers.stream().filter(obj -> obj.getP() >= currP).count();
-			int numSellers = (int)this.sellers.stream().filter(obj -> obj.getP() <= currP).count();
-			xB[i] = screenY((double)numBuyers / this.buyers.size());
-			xS[i] = screenY((double)numSellers / this.sellers.size());
-			//g.drawString(currP + ", " + numBuyers, xB[i] - 60, y[i]);
-			//g.drawString(currP + ", " + numSellers, xS[i] - 60, y[i]);
+		return y;
+	}
+	public int[] getYSs() {
+		int[] y = new int[sellersCnt];
+		for (int i = 0; i < sellersCnt; i++) {
+			final double currP = 1.0 / sellersCnt * i;
+			y[i] = screenY(currP);
 		}
-		g.setColor(new Color(255, 0, 0, 128));
-		for (int i = 0; i < resolution; i++) {
-			g.fillRect(xB[i] - 2, y[i] - 2, 5, 5);
-		}
-        g.setColor(new Color(0, 0, 255, 128));
-        for (int i = 0; i < resolution; i++) {
-            g.fillRect(xS[i] - 2, y[i] - 2, 5, 5);
+		return y;
+	}
+	public void drawNode(Graphics g, Color c, int[] x, int[] y) {
+        if (x.length != y.length) {
+            System.err.println("x-s and y-s don't have the same length!");
+            return;
         }
+		g.setColor(c);
+		for (int i = 0; i < x.length; i++) {
+			g.fillRect(x[i] - 2, y[i] - 2, 5, 5);
+		}
+	}
+	public void drawLines(Graphics g, Color c, int[] x, int[] y) {}
+	public void drawRectsUnder(Graphics g, Color c, int[] x, int[] y) {}
+	public void draw(Graphics g) {
+		int[] xB = getXBs();
+		int[] xS = getXSs();
+		int[] yB = getYBs();
+        int[] yS = getYSs();
 
-        g.setColor(new Color(255, 0, 0, 128));
-		g.drawPolyline(xB, y, resolution);
-
-        g.setColor(new Color(0, 0, 255, 128));
-        g.drawPolyline(xS, y, resolution);
+		drawNode(g, new Color(255, 0, 0), xB, yB);
+		drawNode(g, new Color(0, 0, 255), xS, yS);
 
 		g.setColor(new Color(255, 0, 0, 128));
-		for (int i = 1; i < resolution; i++) {
-			g.fillRect(xB[i], y[i - 1], Math.abs(xB[i] - xB[i - 1]), this.height);
-            g.drawRect(xB[i], y[i - 1], Math.abs(xB[i] - xB[i - 1]), this.height);
+		g.drawPolyline(xB, yB, buyersCnt);
+
+		g.setColor(new Color(0, 0, 255, 128));
+		g.drawPolyline(xS, yS, sellersCnt);
+
+		g.setColor(new Color(255, 0, 0, 128));
+		for (int i = 1; i < buyersCnt; i++) {
+			g.fillRect(xB[i - 1], yB[i], Math.abs(xB[i] - xB[i - 1]), this.height - yB[i]);
+			g.drawRect(xB[i - 1], yB[i], Math.abs(xB[i] - xB[i - 1]), this.height - yB[i]);
 		}
-        g.setColor(new Color(0, 0, 255, 128));
-		for (int i = 0; i < resolution - 1; i++) {
-			g.fillRect(xS[i], y[i], Math.abs(xS[i + 1] - xS[i]), this.height);
-            g.drawRect(xS[i], y[i], Math.abs(xS[i + 1] - xS[i]), this.height);
+		g.setColor(new Color(0, 0, 255, 128));
+		for (int i = 1; i < sellersCnt; i++) {
+			g.fillRect(xS[i], yS[i], Math.abs(xS[i] - xS[i - 1]), this.height - yS[i]);
+			g.drawRect(xS[i], yS[i], Math.abs(xS[i] - xS[i - 1]), this.height - yS[i]);
 		}
 		//      int pE = screenY(getPe());
-		//g.drawRect(0, pE, this.width, 0);
+		// g.drawRect(0, pE, this.width, 0);
 	}
 	public double getPe() { return (double)this.buyers.stream().mapToDouble(i -> (double)i.getP()).average().orElse(1.0); }
 	public int getQe() {
