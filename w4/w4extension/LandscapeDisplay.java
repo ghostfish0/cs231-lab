@@ -32,6 +32,7 @@ public class LandscapeDisplay {
 	protected JFrame win;
 	protected Landscape scape;
 	private LandscapePanel canvas;
+    private LandscapePanel distribution;
 
 	/**
 	 * Initializes a display window for a Landscape.
@@ -46,10 +47,12 @@ public class LandscapeDisplay {
 		this.scape = scape;
 
 		// create a panel in which to display the Landscape
-		this.canvas = new LandscapePanel(this.scape.getWidth(), this.scape.getHeight());
+		this.canvas = new LandscapePanel(this.scape.getWidth() + 50, this.scape.getHeight() + 50);
+        this.distribution = new LandscapePanel(50, this.scape.getHeight() + 50);
 
 		// add the panel to the window, layout, and display
 		this.win.add(this.canvas, BorderLayout.CENTER);
+        this.win.add(this.distribution, BorderLayout.EAST);
 		this.win.pack();
 		this.win.setVisible(true);
 	}
@@ -118,16 +121,7 @@ public class LandscapeDisplay {
 	// test function that creates a new LandscapeDisplay and populates it with 200
 	// agents.
 	public static void main(String[] args) throws InterruptedException {
-		Landscape scape = new Landscape(500, 500);
-		Random gen = new Random();
-
-		// Creates 100 SocialAgents and 100 AntiSocialAgents
-		for (int i = 0; i < 100; i++) {
-			scape.addAgent(new SocialAgent(gen.nextDouble() * scape.getWidth(),
-				               gen.nextDouble() * scape.getHeight(), 25));
-			scape.addAgent(new AntiSocialAgent(gen.nextDouble() * scape.getWidth(),
-                               gen.nextDouble() * scape.getHeight(), 50));
-		}
+		Landscape scape = new Landscape(500, 500, 100);
 
 		LandscapeDisplay display = new LandscapeDisplay(scape);
 
