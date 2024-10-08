@@ -32,7 +32,6 @@ public class LandscapeDisplay {
 	protected JFrame win;
 	protected Landscape scape;
 	private LandscapePanel canvas;
-	private LandscapePanel distribution;
 
 	/**
 	 * Initializes a display window for a Landscape.
@@ -47,12 +46,10 @@ public class LandscapeDisplay {
 		this.scape = scape;
 
 		// create a panel in which to display the Landscape
-		this.canvas = new LandscapePanel(this.scape.getWidth(), this.scape.getHeight());
-		this.distribution = new LandscapePanel(50, this.scape.getHeight() + 50);
+		this.canvas = new GraphPanel(this.scape.getWidth(), this.scape.getHeight());
 
 		// add the panel to the window, layout, and display
 		this.win.add(this.canvas, BorderLayout.CENTER);
-		// this.win.add(this.distribution, BorderLayout.EAST);
 		this.win.pack();
 		this.win.setVisible(true);
 	}
@@ -102,6 +99,11 @@ public class LandscapeDisplay {
 			this.setBackground(Color.white);
 		}
 
+	} // end LandscapePanel
+
+	public class GraphPanel extends LandscapePanel {
+
+		public GraphPanel(int width, int height) { super(width, height); }
 		/**
 		 * Method overridden from JComponent that is responsible for
 		 * drawing components on the screen. The supplied Graphics
@@ -113,9 +115,7 @@ public class LandscapeDisplay {
 			super.paintComponent(g);
 			scape.draw(g);
 		} // end paintComponent
-
-	} // end LandscapePanel
-
+	}
 	public void repaint() { this.win.repaint(); }
 
 	// test function that creates a new LandscapeDisplay and populates it with 200
