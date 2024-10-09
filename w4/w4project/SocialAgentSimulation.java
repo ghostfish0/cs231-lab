@@ -1,9 +1,9 @@
 /*
-  Tin Nguyen 
-  The SocialAgentSimulation class 
-  runs only a static main function to 
-  extract the data needed for exploration 1: 
-  Finding the correlation between number of agents in a landscape 
+  Tin Nguyen
+  The SocialAgentSimulation class
+  runs only a static main function to
+  extract the data needed for exploration 1:
+  Finding the correlation between number of agents in a landscape
   and the time (frames) it take for the landscape to come to a stable (no movement) position
 */
 import java.util.Random;
@@ -19,8 +19,8 @@ public class SocialAgentSimulation {
 		Landscape scape = new Landscape(500, 500);
 		// LandscapeDisplay display = new LandscapeDisplay(scape);
 
-		for (int trial = 0; trial < 10; trial++) {
-			for (N = 1; N <= 5; N++) {
+		for (N = 1; N <= 5; N++) {
+			for (int trial = 0; trial < 10; trial++) {
 				scape.clearAgents();
 				for (int i = 0; i < N * 50; i++) {
 					scape.addAgent(new SocialAgent(

@@ -19,8 +19,8 @@ public class DogTicksSimulation {
 		Landscape scape = new Landscape(500, 500);
 		LandscapeDisplay display = new LandscapeDisplay(scape);
 
-		for (int trial = 0; trial < 10; trial++) {
-			for (N = 1; N <= 12; N++) {
+		for (N = 1; N <= 12; N++) {
+			for (int trial = 0; trial < 10; trial++) {
 				scape.clearAgents();
 				for (int i = 0; i < N * 50; i++) {
 					scape.addAgent(new Tick(rand.nextDouble(scape.getWidth()),
