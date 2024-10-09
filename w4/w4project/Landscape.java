@@ -1,8 +1,8 @@
 /*
-  Tin Nguyen 
-  The Landscape class holds 
+  Tin Nguyen
+  The Landscape class holds
   the width and height of the map,
-  an ArrayList of Agents 
+  an ArrayList of Agents
   and functions to modify and update this list
 */
 
@@ -17,7 +17,7 @@ public class Landscape {
 	private static Random rand;
 
 	/**
-     * Initialize a landscape with given width and height
+	 * Initialize a landscape with given width and height
 	 * @param w Width of the landscape
 	 * @param h Height of the landscape
 	 */
@@ -37,54 +37,73 @@ public class Landscape {
 	 * @return the width of the Landscape
 	 */
 	public int getWidth() { return this.width; }
-    /**
-     * Add an agent to the list 
-     * @param a the Agent to be added 
-     */
+	/**
+	 * Add an agent to the list
+	 * @param a the Agent to be added
+	 */
 	public void addAgent(Agent a) { this.agents.add(a); }
-    /**
-     * @return A string representation of the Landscape
-     */
+	/**
+	 * @return A string representation of the Landscape
+	 */
 	public String toString() { return "Width: " + this.width + ", Height: " + this.height + "\n" + agents.size() + " agents"; }
-    /**
-     * Static method to calculate the distance squared between two given points in the landscape
-     * @param ax x coordinate of the first point
-     * @param ay y coordinate of the first point
-     * @param bx x coordinate of the second point
-     * @param by y coordinate of the second point
-     * @return
-     */
+	/**
+	 * Static method to calculate the distance squared between two given points in the landscape
+	 * @param ax x coordinate of the first point
+	 * @param ay y coordinate of the first point
+	 * @param bx x coordinate of the second point
+	 * @param by y coordinate of the second point
+	 * @return
+	 */
 	public static double distanceSquared(double ax, double ay, double bx, double by) {
 		return (ax - bx) * (ax - bx) + (ay - by) * (ay - by);
 	}
-    /**
-     * Returns an ArrayList of Agents within the given radius from the given position
-     * @param x0 x coordinate of the given postition
-     * @param y0 y coordinate of the given postition
-     * @return An ArrayList of Agents within the given radius from the given position
-     */
+	/**
+	 * Returns an ArrayList of Agents within the given radius from the given position
+	 * @param x0 x coordinate of the given postition
+	 * @param y0 y coordinate of the given postition
+	 * @return An ArrayList of Agents within the given radius from the given position
+	 */
 	protected LinkedList<Agent> getNeighbors(double x0, double y0, double radius) {
+		return getNeighbors(this.agents, x0, y0, radius);
+	}
+	protected LinkedList<Agent> getDogs(double x0, double y0, double radius) {
 		LinkedList<Agent> neighbors = new LinkedList<>();
-		for (Agent a : this.agents) {
+		for (Agent a : this.agents)
+			if (a instanceof Dog)
+				neighbors.add(a);
+		return getNeighbors(neighbors, x0, y0, radius);
+	}
+	protected LinkedList<Agent> getTicks(double x0, double y0, double radius) {
+		LinkedList<Agent> neighbors = new LinkedList<>();
+		for (Agent a : this.agents)
+			if (a instanceof Tick)
+				neighbors.add(a);
+		return getNeighbors(neighbors, x0, y0, radius);
+	}
+	protected static LinkedList<Agent> getNeighbors(LinkedList<Agent> agents, double x0, double y0, double radius) {
+		LinkedList<Agent> neighbors = new LinkedList<>();
+		for (Agent a : agents) {
 			if (distanceSquared(x0, y0, a.getX(), a.getY()) < radius * radius)
 				neighbors.add(a);
 		}
 		return neighbors;
 	}
-    /**
-     * Draw each agent in the landscape's list
-     * @param g the Graphics instance to draw to 
-     */
+	/**
+	 * Draw each agent in the landscape's list
+	 * @param g the Graphics instance to draw to
+	 */
 	public void draw(Graphics g) {
-		LinkedList<Agent> agentsCopy = new LinkedList<>(this.agents);
-		for (Agent a : agentsCopy) {
-			a.draw(g);
+        LinkedList<Agent> agents = new LinkedList<>(this.agents);
+        Agent a = agents.poll();
+        while (a != null) {
+            a.draw(g);
+            a = agents.poll();
 		}
 	}
-    /**
-     * Update the postition of each agents in the landscape's list 
-     * @return The number of agents that moved
-     */
+	/**
+	 * Update the postition of each agents in the landscape's list
+	 * @return The number of agents that moved
+	 */
 	public int updateAgents() {
 		int victimIndex = rand.nextInt(agents.size());
 		Agent victim = this.agents.get(victimIndex);
@@ -100,11 +119,20 @@ public class Landscape {
 		}
 		return cntMoved;
 	}
-    /**
-     * Clear the landscape's list of agents
-     */
-    public void clearAgents() {
-        this.agents.clear();
-    }
+	/**
+	 * Update dogs and ticks
+	 * @return The number of agents that moved
+	 */
+	public int updateDogTicks() {
+		int cntMoved = 0;
+		for (int i = 0; i < this.agents.size(); i++) {
+			cntMoved += this.agents.get(i).booleanUpdateState(this) ? 1 : 0;
+		}
+		return cntMoved;
+	}
+	/**
+	 * Clear the landscape's list of agents
+	 */
+	public void clearAgents() { this.agents.clear(); }
 	public static void main(String[] args) {}
 }

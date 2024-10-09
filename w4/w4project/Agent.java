@@ -80,8 +80,8 @@ public abstract class Agent {
 	 * @param scape The Landscape the Agent belong to
 	 */
 	protected void attemptMove(Landscape scape) {
-		double x_ = this.x + rand.nextInt(21) - 10;
-		double y_ = this.y + rand.nextInt(21) - 10;
+		double x_ = this.x + rand.nextInt(41) - 20;
+		double y_ = this.y + rand.nextInt(41) - 20;
 		if (x_ < 0 || y_ < 0 || x_ > scape.getWidth() || y_ > scape.getHeight()) {
 			this.moved = false;
 			return;
@@ -107,6 +107,22 @@ public abstract class Agent {
 	 */
     protected LinkedList<Agent> getNeighbors(Landscape scape) {
         return scape.getNeighbors(this.x, this.y, this.radius);
+    }
+    /**
+     * Return dogs within this agent's radius
+     * @param scape The Landscape the Agent belong to
+     * @return dogs within this agent's radius
+     */
+    protected LinkedList<Agent> getDogs(Landscape scape) {
+        return scape.getDogs(this.x, this.y, this.radius);
+    }
+    /**
+     * Return ticks within this agent's radius
+     * @param scape The Landscape the Agent belong to
+     * @return dogs within this agent's radius
+     */
+    protected LinkedList<Agent> getTicks(Landscape scape) {
+        return scape.getTicks(this.x, this.y, this.radius);
     }
 	/**
      * Update the state of the Agent, to be defined in subclass
