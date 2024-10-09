@@ -18,6 +18,6 @@ public abstract class Agent {
 	public void setP(double purchasePrice) { this.p = purchasePrice; }
 	public boolean getPurchased() { return this.purchased; }
 	public abstract String toString();
-	public abstract void exchange(double purchasePrice, boolean agreeable);
+	public abstract void exchange(boolean agreeable);
 	public abstract boolean attemptExchange(double p);
 }

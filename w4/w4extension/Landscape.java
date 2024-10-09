@@ -14,12 +14,11 @@ public class Landscape {
 	protected AgentList<Seller> sellers;
 	protected AccumulativeGraph accumulativeGraph;
 	protected DistributionGraph distributionGraph;
-	protected static Random rand;
+	final protected static Random rand = new Random();
 
 	public Landscape(int w, int h) { this(w, h, 5); }
 	public Landscape(int w, int h, int N) { this(w, h, N, N); }
 	public Landscape(int w, int h, int nB, int nS) {
-		rand = new Random();
 		this.accumulativeGraph = new AccumulativeGraph(0, 0, w, h);
 		this.distributionGraph = new DistributionGraph(w, 0, w, h);
 		this.width = 2 * w;
@@ -68,18 +67,23 @@ public class Landscape {
 		for (int i = 0; i < as.size(); i++) {
 			attemptExchange(as.get(i), bs.get(i));
 		}
+		for (int i = as.size(); i < bs.size(); i++) {
+			bs.get(i).exchange(false);
+		}
 	}
 	public void updateAgents() { matchAgents(new ArrayList<>(this.buyers), new ArrayList<>(this.sellers)); }
 	public void attemptExchange(Agent a, Agent b) {
 		boolean aWilling = b.attemptExchange(a.getP());
 		boolean bWilling = a.attemptExchange(b.getP());
-		b.exchange(a.getP(), aWilling && bWilling);
-		a.exchange(b.getP(), aWilling && bWilling);
+		b.exchange(aWilling && bWilling);
+		a.exchange(aWilling && bWilling);
 	}
 	public void clearAgents() {
 		this.buyers.clear();
 		this.sellers.clear();
 	}
+	public void clearBuyers() { this.buyers.clear(); }
+	public void clearSellers() { this.sellers.clear(); }
 	public void draw(Graphics g) {
 		this.accumulativeGraph.draw(g);
 		this.distributionGraph.draw(g);
@@ -90,7 +94,7 @@ public class Landscape {
 		protected int y;
 		protected int width;
 		protected int height;
-		final protected int resolution = 100;
+		final protected int resolution = 50;
 		public int getWidth() { return this.width; }
 		public int getHeight() { return this.height; }
 		public static void offset(int[] arr, int k) {
@@ -111,11 +115,9 @@ public class Landscape {
 		public int[] getYs() {
 			double[] y = new double[this.resolution];
 			for (int i = 0; i < resolution; i++)
-				y[i] = (double)i / resolution;
+				y[i] = (double)(resolution - i) / resolution;
 			return toScreen(y, this.height);
 		}
-		public void drawLines(Graphics g, Color c, int[] x, int[] y) {}
-		public void drawRectsUnder(Graphics g, Color c, int[] x, int[] y) {}
 		public abstract void draw(Graphics g);
 	}
 	private class DistributionGraph extends Graph {
@@ -126,8 +128,10 @@ public class Landscape {
 			this.height = h;
 		}
 		public void draw(Graphics g) {
-			int[] xB = scape.buyers.toScreenDistribution(this.resolution, this.width / 2);
-			int[] xS = scape.sellers.toScreenDistribution(this.resolution, this.width / 2);
+			int[] xB = scape.buyers.toScreenDistribution(this.resolution, this.width / 2,
+					             scape.buyers.size());
+			int[] xS = scape.sellers.toScreenDistribution(this.resolution, this.width / 2,
+					              scape.buyers.size());
 			int[] yB = getYs();
 			int[] yS = getYs();
 			offset(xB, this.x);
@@ -137,15 +141,31 @@ public class Landscape {
 
 			g.setColor(new Color(255, 0, 0, 128));
 			for (int i = 1; i < this.resolution; i++) {
-				g.fillRect(this.x, yB[i], xB[i] - this.x, yB[i] - yB[i - 1]);
-				g.drawRect(this.x, yB[i], xB[i] - this.x, yB[i] - yB[i - 1]);
+				g.fillRect(this.x, yB[i], xB[i] - this.x, yB[i - 1] - yB[i]);
+				g.drawRect(this.x, yB[i], xB[i] - this.x, yB[i - 1] - yB[i]);
 			}
-			g.setColor(new Color(0, 0, 255, 128));
+			g.setColor(new Color(0, 0, 255, 64));
 			for (int i = 1; i < this.resolution; i++) {
 				g.fillRect(3 * this.x / 2, yS[i], xS[i] - 3 * this.x / 2,
-				           yS[i] - yS[i - 1]);
+				           yS[i - 1] - yS[i]);
 				g.drawRect(3 * this.x / 2, yS[i], xS[i] - 3 * this.x / 2,
-				           yS[i] - yS[i - 1]);
+				           yS[i - 1] - yS[i]);
+			}
+
+			AgentList<Agent> lostBuyers = scape.buyers.filterUnpurchased();
+			AgentList<Agent> lostSellers = scape.sellers.filterUnpurchased();
+			xB = lostBuyers.toScreenDistribution(this.resolution, this.width / 2, scape.buyers.size());
+			xS = lostSellers.toScreenDistribution(this.resolution, this.width / 2, scape.buyers.size());
+			offset(xB, this.x);
+			offset(xS, 3 * this.x / 2);
+
+			g.setColor(new Color(0, 0, 0, 128));
+			for (int i = 1; i < this.resolution; i++) {
+				g.fillRect(this.x, yB[i], xB[i] - this.x, yB[i - 1] - yB[i]);
+			}
+			for (int i = 1; i < this.resolution; i++) {
+				g.fillRect(3 * this.x / 2, yS[i], xS[i] - 3 * this.x / 2,
+				           yS[i - 1] - yS[i]);
 			}
 		}
 	}
@@ -157,8 +177,8 @@ public class Landscape {
 			this.height = h;
 		}
 		public void draw(Graphics g) {
-			int[] xB = scape.buyers.toScreenAccumulative(this.resolution, this.width);
-			int[] xS = scape.sellers.toScreenAccumulativeR(this.resolution, this.width);
+			int[] xB = scape.buyers.toScreenAccumulativeR(this.resolution, this.width);
+			int[] xS = scape.sellers.toScreenAccumulative(this.resolution, this.width);
 			int[] yB = getYs();
 			int[] yS = getYs();
 
@@ -177,16 +197,16 @@ public class Landscape {
 			g.drawPolyline(xS, yS, this.resolution);
 
 			g.setColor(new Color(255, 0, 0, 128));
-			for (int i = 1; i < this.resolution; i++) {
-				g.fillRect(xB[i - 1], yB[i], Math.abs(xB[i] - xB[i - 1]),
+			for (int i = 0; i < this.resolution - 1; i++) {
+				g.fillRect(xB[i + 1], yB[i], Math.abs(xB[i] - xB[i + 1]),
 				           this.height - yB[i]);
-				g.drawRect(xB[i - 1], yB[i], Math.abs(xB[i] - xB[i - 1]),
+				g.drawRect(xB[i + 1], yB[i], Math.abs(xB[i] - xB[i + 1]),
 				           this.height - yB[i]);
 			}
 			g.setColor(new Color(0, 0, 255, 128));
-			for (int i = 1; i < this.resolution; i++) {
-				g.fillRect(xS[i], yS[i], Math.abs(xS[i] - xS[i - 1]), this.height - yS[i]);
-				g.drawRect(xS[i], yS[i], Math.abs(xS[i] - xS[i - 1]), this.height - yS[i]);
+			for (int i = 0; i < this.resolution - 1; i++) {
+				g.fillRect(xS[i], yS[i], Math.abs(xS[i + 1] - xS[i]), this.height - yS[i]);
+				g.drawRect(xS[i], yS[i], Math.abs(xS[i + 1] - xS[i]), this.height - yS[i]);
 			}
 		}
 	}

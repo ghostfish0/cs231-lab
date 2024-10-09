@@ -13,18 +13,27 @@ public class AgentList<E> extends ArrayList<Agent> {
 			arr[i] = toScreen(p, ns[i]);
 		return arr;
 	}
-	public static double[] getPs(ArrayList<Agent> agents) {
-		double[] arr = new double[agents.size()];
+	public double[] getPs() {
+		double[] arr = new double[this.size()];
 		int iterator = 0;
-		for (Agent a : agents) {
+		for (Agent a : this) {
 			arr[iterator] = a.getP();
+			iterator++;
+		}
+		return arr;
+	}
+	public double[] getPurchaseds() {
+		double[] arr = new double[this.size()];
+		int iterator = 0;
+		for (Agent a : this) {
+			arr[iterator] = a.getPurchased() ? 0.167 : 0.333;
 			iterator++;
 		}
 		return arr;
 	}
 	public int[] distribution(int resolution) {
 		int[] cnt = new int[resolution];
-		for (int i : toScreen(getPs(this), resolution)) {
+		for (int i : toScreen(this.getPs(), resolution)) {
 			cnt[i]++;
 		}
 		return cnt;
@@ -53,13 +62,21 @@ public class AgentList<E> extends ArrayList<Agent> {
 		int[] x = toScreen(size / this.size(), accumulation);
 		return x;
 	}
-	public int[] toScreenDistribution(int resolution, int size) {
+	public int[] toScreenDistribution(int resolution, int canvasSize, int dataSize) {
 		int[] distribution = this.distribution(resolution);
-        int max_ = -1;
-        for(int i : distribution)
-            if (i > max_)
-                max_ = i;
-		int[] x = toScreen((double) size / max_, distribution);
+		int max_ = -1;
+		for (int i : distribution)
+			if (i > max_)
+				max_ = i;
+		int[] x = toScreen((double) canvasSize / dataSize, distribution);
 		return x;
+	}
+	public AgentList<Agent> filterUnpurchased() {
+		AgentList<Agent> list = new AgentList<>();
+		for (Agent a : this) {
+			if (!a.getPurchased())
+				list.add(a);
+		}
+        return list;
 	}
 }

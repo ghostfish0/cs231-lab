@@ -121,13 +121,13 @@ public class LandscapeDisplay {
 	// test function that creates a new LandscapeDisplay and populates it with 200
 	// agents.
 	public static void main(String[] args) throws InterruptedException {
-		Landscape scape = new Landscape(400, 400, 100, 50);
+		Landscape scape = new Landscape(400, 400, 100, 200);
 
 		LandscapeDisplay display = new LandscapeDisplay(scape);
 
 		// Uncomment below when updateAgents() has been implemented
 		while (true) {
-			Thread.sleep(100);
+			Thread.sleep(50);
 			scape.updateAgents();
 			display.repaint();
 		}
