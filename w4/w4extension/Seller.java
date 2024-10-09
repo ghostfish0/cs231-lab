@@ -1,5 +1,7 @@
-import java.awt.Graphics;
-
+/*
+  Tin Nguyen 
+  The Seller class, represents firms participant in the market
+*/
 public class Seller extends Agent {
 	public Seller(double p) { super(p); }
 	public String toString() { return "Seller: " + this.p; }

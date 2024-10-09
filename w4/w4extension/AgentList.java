@@ -44,6 +44,9 @@ public class AgentList<E> extends ArrayList<Agent> {
     // Count the frequency of the prices of the agents of this list across intervals 
     // and add the results accumulatively from left to right
     // resolution is the number of intervals
+    // use to calculate the seller's accumulative function in the market
+    // because the seller will sell at their expected price or higher
+    // so the direction of accumulation is with the direction of the price
 	public static int[] accumulate(int[] arr) {
 		int[] arr_ = new int[arr.length];
 		arr_[0] = arr[0];
@@ -52,6 +55,10 @@ public class AgentList<E> extends ArrayList<Agent> {
 		return arr_;
 	}
     // Same as above but right to left
+    // use to calculate the buyer's accumulative function in the market
+    // because the buyer will buy at their expected price or lower
+    // so the direction of accumulation is against the direction of the price
+
 	public static int[] accumulateR(int[] arr) {
 		int[] arr_ = new int[arr.length];
 		arr_[arr.length - 1] = arr[arr.length - 1];
