@@ -18,5 +18,6 @@ public class Buyer extends Agent {
             this.p = 0.1;
 	}
     // If the item's price is lower than the Buyer's expectation they buy it
-	public boolean attemptExchange(double p) { return (p < this.p); }
+    // The price must not exceed the absolute price (the paying capacity of the buyer)
+	public boolean attemptExchange(double p) { if (p > this.absP) return false; return (p < this.p); }
 }

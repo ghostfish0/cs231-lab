@@ -9,13 +9,15 @@ import java.util.Random;
 public abstract class Agent {
     // random generator
 	protected static Random rand;
-    // the agent's expected price
+    // the agent's original, absolute price, doesn't change
+    protected double absP;
+    // the agent's expected price, changes 
 	protected double p;
     // keep track of whether this agent made an exchange last iteration
 	protected boolean purchased;
 
 	public Agent(double p) {
-		this.p = p;
+		this.p = this.absP = p;
 		this.purchased = true;
 		rand = new Random();
 	}
