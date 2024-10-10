@@ -17,6 +17,7 @@ public class DogTicksSimulation {
 			N = Integer.parseInt(args[0]);
 		}
 		Landscape scape = new Landscape(500, 500);
+        // disable draw to display to increase data collection speed
 		LandscapeDisplay display = new LandscapeDisplay(scape);
 
 		for (N = 1; N <= 12; N++) {

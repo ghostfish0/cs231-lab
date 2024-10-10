@@ -17,9 +17,11 @@ public class SocialAgentSimulation {
 			N = Integer.parseInt(args[0]);
 		}
 		Landscape scape = new Landscape(500, 500);
+        // disable draw to display to increase data collection speed
 		// LandscapeDisplay display = new LandscapeDisplay(scape);
 
 		for (N = 1; N <= 5; N++) {
+            System.out.print("\n" + N * 50);
 			for (int trial = 0; trial < 10; trial++) {
 				scape.clearAgents();
 				for (int i = 0; i < N * 50; i++) {
@@ -35,7 +37,7 @@ public class SocialAgentSimulation {
 					frame++;
 					// display.repaint();
 					if (cntMoved == 0 || frame >= 5000) {
-						System.out.println(N * 50 + " " + frame);
+						System.out.print(frame + " ");
 						break;
 					}
 				}
