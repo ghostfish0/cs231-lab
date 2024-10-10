@@ -121,7 +121,7 @@ public class LandscapeDisplay {
 	// test function that creates a new LandscapeDisplay and populates it with 200
 	// agents.
 	public static void main(String[] args) throws InterruptedException {
-		Landscape scape = new Landscape(400, 400, 180, 200);
+		Landscape scape = new Landscape(400, 400, 300, 50);
 
 		LandscapeDisplay display = new LandscapeDisplay(scape);
 

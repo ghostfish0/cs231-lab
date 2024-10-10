@@ -12,12 +12,12 @@ public class Buyer extends Agent {
         // each time the amount is randomly varied
 		this.p += (agreeable ? -1 : 1) * rand.nextDouble(0.4, 0.6) * 0.005;
         // reset price if price is above or below the imaginary limit [0;1.0]
-        if (this.p >= 1.0)
-            this.p = 0.9;
+        if (this.p > this.absP)
+            this.p = this.absP;
         if (this.p <= 0)
             this.p = 0.1;
 	}
     // If the item's price is lower than the Buyer's expectation they buy it
     // The price must not exceed the absolute price (the paying capacity of the buyer)
-	public boolean attemptExchange(double p) { if (p > this.absP) return false; return (p < this.p); }
+	public boolean attemptExchange(double p) { return (p <= this.p); }
 }
