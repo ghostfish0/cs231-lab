@@ -34,7 +34,7 @@ public class AgentList<E> extends ArrayList<Agent> {
 	}
     // Count the frequency of the prices of the agents of this list across intervals 
     // resolution is the number of intervals
-	public int[] distribution(int resolution) {
+	public int[] histogram(int resolution) {
 		int[] cnt = new int[resolution];
 		for (int i : toScreen(this.getPs(), resolution)) {
 			cnt[i]++;
@@ -42,9 +42,9 @@ public class AgentList<E> extends ArrayList<Agent> {
 		return cnt;
 	}
     // Count the frequency of the prices of the agents of this list across intervals 
-    // and add the results accumulatively from left to right
+    // and add the results cumulativeHistogramly from left to right
     // resolution is the number of intervals
-    // use to calculate the seller's accumulative function in the market
+    // use to calculate the seller's cumulativeHistogram function in the market
     // because the seller will sell at their expected price or higher
     // so the direction of accumulation is with the direction of the price
 	public static int[] accumulate(int[] arr) {
@@ -55,7 +55,7 @@ public class AgentList<E> extends ArrayList<Agent> {
 		return arr_;
 	}
     // Same as above but right to left
-    // use to calculate the buyer's accumulative function in the market
+    // use to calculate the buyer's cumulativeHistogram function in the market
     // because the buyer will buy at their expected price or lower
     // so the direction of accumulation is against the direction of the price
 
@@ -67,25 +67,25 @@ public class AgentList<E> extends ArrayList<Agent> {
 		return arr_;
 	}
     // Get the accumulation of prices and translate to screen coordinates
-	public int[] toScreenAccumulative(int resolution, int size) {
-		int[] accumulation = accumulate(this.distribution(resolution));
+	public int[] toScreenCumulativeHistogram(int resolution, int size) {
+		int[] accumulation = accumulate(this.histogram(resolution));
 		int[] x = toScreen(size / this.size(), accumulation);
 		return x;
 	}
     // Same as above but right to left
-	public int[] toScreenAccumulativeR(int resolution, int size) {
-		int[] accumulation = accumulateR(this.distribution(resolution));
+	public int[] toScreenCumulativeHistogramR(int resolution, int size) {
+		int[] accumulation = accumulateR(this.histogram(resolution));
 		int[] x = toScreen(size / this.size(), accumulation);
 		return x;
 	}
-    // Get the distribution of prices and translate to screen coordinates
-	public int[] toScreenDistribution(int resolution, int canvasSize, int dataSize) {
-		int[] distribution = this.distribution(resolution);
+    // Get the histogram of prices and translate to screen coordinates
+	public int[] toScreenHistogram(int resolution, int canvasSize, int dataSize) {
+		int[] histogram = this.histogram(resolution);
 		int max_ = -1;
-		for (int i : distribution)
+		for (int i : histogram)
 			if (i > max_)
 				max_ = i;
-		int[] x = toScreen((double) canvasSize / dataSize, distribution);
+		int[] x = toScreen((double) canvasSize / dataSize, histogram);
 		return x;
 	}
     // Return the list of Agents that did not exchanged last iteration

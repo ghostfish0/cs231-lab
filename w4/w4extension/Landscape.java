@@ -19,17 +19,17 @@ public class Landscape {
 	protected int sellersCnt;
 	protected AgentList<Buyer> buyers;
 	protected AgentList<Seller> sellers;
-	protected AccumulativeGraph accumulativeGraph;
-	protected DistributionGraph distributionGraph;
+	protected CumulativeHistogramGraph cumulativeHistogramGraph;
+	protected HistogramGraph histogramGraph;
 	final protected static Random rand = new Random();
 
 	public Landscape(int w, int h) { this(w, h, 5); }
 	public Landscape(int w, int h, int N) { this(w, h, N, N); }
 	public Landscape(int w, int h, int nB, int nS) {
-        // place the accumulativeGraph first
-		this.accumulativeGraph = new AccumulativeGraph(0, 0, w, h);
-        // place the distributionGraphs later using a width's offset
-		this.distributionGraph = new DistributionGraph(w, 0, w, h);
+        // place the cumulativeHistogramGraph first
+		this.cumulativeHistogramGraph = new CumulativeHistogramGraph(0, 0, w, h);
+        // place the histogramGraphs later using a width's offset
+		this.histogramGraph = new HistogramGraph(w, 0, w, h);
         // reserve width for the graphs
 		this.width = 2 * w;
 		this.height = h;
@@ -101,10 +101,10 @@ public class Landscape {
 	public void clearBuyers() { this.buyers.clear(); }
 	public void clearSellers() { this.sellers.clear(); }
 	public void draw(Graphics g) {
-        // draw the Accumulative graph
-		this.accumulativeGraph.draw(g);
-        // draw the Distribution graphs 
-		this.distributionGraph.draw(g);
+        // draw the CumulativeHistogram graph
+		this.cumulativeHistogramGraph.draw(g);
+        // draw the Histogram graphs 
+		this.histogramGraph.draw(g);
 	}
 	private abstract class Graph {
 		final Landscape scape = Landscape.this;
@@ -139,8 +139,8 @@ public class Landscape {
 		}
 		public abstract void draw(Graphics g);
 	}
-	private class DistributionGraph extends Graph {
-		public DistributionGraph(int x, int y, int w, int h) {
+	private class HistogramGraph extends Graph {
+		public HistogramGraph(int x, int y, int w, int h) {
 			this.x = x;
 			this.y = y;
 			this.width = w;
@@ -148,9 +148,9 @@ public class Landscape {
 		}
 		public void draw(Graphics g) {
             // two graphs, each for the buyers and the sellers, each is worth half the width
-			int[] xB = scape.buyers.toScreenDistribution(this.resolution, this.width / 2,
+			int[] xB = scape.buyers.toScreenHistogram(this.resolution, this.width / 2,
 					             scape.buyers.size());
-			int[] xS = scape.sellers.toScreenDistribution(this.resolution, this.width / 2,
+			int[] xS = scape.sellers.toScreenHistogram(this.resolution, this.width / 2,
 					              scape.buyers.size());
 			int[] yB = getYs();
 			int[] yS = getYs();
@@ -160,7 +160,7 @@ public class Landscape {
 			offset(yB, this.y);
 			offset(yS, this.y);
 
-            // draw the distribution
+            // draw the histogram
 			g.setColor(new Color(255, 0, 0, 128));
 			for (int i = 1; i < this.resolution; i++) {
 				g.fillRect(this.x, yB[i], xB[i] - this.x, yB[i - 1] - yB[i]);
@@ -174,11 +174,11 @@ public class Landscape {
 				           yS[i - 1] - yS[i]);
 			}
 
-            // draw the distribution in black for agents who didn't get to exchange last turn
+            // draw the histogram in black for agents who didn't get to exchange last turn
 			AgentList<Agent> lostBuyers = scape.buyers.filterUnpurchased();
 			AgentList<Agent> lostSellers = scape.sellers.filterUnpurchased();
-			xB = lostBuyers.toScreenDistribution(this.resolution, this.width / 2, scape.buyers.size());
-			xS = lostSellers.toScreenDistribution(this.resolution, this.width / 2, scape.buyers.size());
+			xB = lostBuyers.toScreenHistogram(this.resolution, this.width / 2, scape.buyers.size());
+			xS = lostSellers.toScreenHistogram(this.resolution, this.width / 2, scape.buyers.size());
 			offset(xB, this.x);
 			offset(xS, 3 * this.x / 2);
 
@@ -192,16 +192,16 @@ public class Landscape {
 			}
 		}
 	}
-	private class AccumulativeGraph extends Graph {
-		public AccumulativeGraph(int x, int y, int w, int h) {
+	private class CumulativeHistogramGraph extends Graph {
+		public CumulativeHistogramGraph(int x, int y, int w, int h) {
 			this.x = x;
 			this.y = y;
 			this.width = w;
 			this.height = h;
 		}
 		public void draw(Graphics g) {
-			int[] xB = scape.buyers.toScreenAccumulativeR(this.resolution, this.width);
-			int[] xS = scape.sellers.toScreenAccumulative(this.resolution, this.width);
+			int[] xB = scape.buyers.toScreenCumulativeHistogramR(this.resolution, this.width);
+			int[] xS = scape.sellers.toScreenCumulativeHistogram(this.resolution, this.width);
 			int[] yB = getYs();
 			int[] yS = getYs();
 
