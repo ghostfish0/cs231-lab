@@ -85,7 +85,7 @@ public class AgentList<E> extends ArrayList<Agent> {
 		for (int i : histogram)
 			if (i > max_)
 				max_ = i;
-		int[] x = toScreen((double) canvasSize / dataSize, histogram);
+		int[] x = toScreen((double) canvasSize / max_, histogram);
 		return x;
 	}
     // Return the list of Agents that did not exchanged last iteration
