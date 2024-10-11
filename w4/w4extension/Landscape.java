@@ -149,14 +149,14 @@ public class Landscape {
 		}
 		public void draw(Graphics g) {
 			// draw the histogram in black for agents who didn't get to exchange last turn
-			AgentList<Agent> lostBuyers = scape.buyers.filterUnpurchased();
-			AgentList<Agent> lostSellers = scape.sellers.filterUnpurchased();
+			AgentList<Agent> currBuyers = scape.buyers.filter(false);
+			AgentList<Agent> currSellers = scape.sellers.filter(false);
 
 			// two graphs, each for the buyers and the sellers, each is worth half the width
 			int[] xB =
-			        lostBuyers.toScreenHistogram(this.resolution, this.width / 2, scape.buyers.size());
+			        currBuyers.toScreenHistogram(this.resolution, this.width / 2, scape.buyers.size());
 			int[] xS =
-			        lostSellers.toScreenHistogram(this.resolution, this.width / 2, scape.buyers.size());
+			        currSellers.toScreenHistogram(this.resolution, this.width / 2, scape.sellers.size());
 			int[] yB = getYs();
 			int[] yS = getYs();
 
@@ -174,8 +174,11 @@ public class Landscape {
 				           yS[i - 1] - yS[i]);
 			}
 
-			xB = scape.buyers.toScreenHistogram(this.resolution, this.width / 2, scape.buyers.size());
-			xS = scape.sellers.toScreenHistogram(this.resolution, this.width / 2, scape.buyers.size());
+			currBuyers = scape.buyers.filter(true);
+			currSellers = scape.sellers.filter(true);
+
+			xB = currBuyers.toScreenHistogram(this.resolution, this.width / 2, scape.buyers.size());
+			xS = currSellers.toScreenHistogram(this.resolution, this.width / 2, scape.sellers.size());
 			offset(xB, this.x);
 			// offset the second graph to 1.5 the width
 			offset(xS, 3 * this.x / 2);
