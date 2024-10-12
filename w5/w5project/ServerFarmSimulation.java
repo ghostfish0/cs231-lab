@@ -28,7 +28,7 @@ public class ServerFarmSimulation {
          * to run your experiments
          */
 
-        String dispatcherType = "random"; // Which jobDispatcher to use
+        String dispatcherType = "shortest"; // Which jobDispatcher to use
 
         // Initialize the job maker with the mean arrival and processing time
         JobMaker jobMaker = new JobMaker(meanArrivalTime, meanProcessingTime);

@@ -24,6 +24,7 @@ public class Server {
 	public void addJob(Job job) {
 		this.jobs.offer(job);
 		this.remainingTime += job.getProcessingTimeRemaining();
+        this.size++;
 	}
 	public void processTo(double time) {
 		this.sysTime += time;

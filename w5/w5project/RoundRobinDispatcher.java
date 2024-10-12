@@ -1,18 +1,19 @@
 /*
-file name:      RandomDispatcher.java
+file name:      RoundRobinDispatcher.java
 Authors:        Tin Nguyen
 last modified:  10/11/2024
 */
 import java.util.ArrayList;
-import java.util.Random;
 
 public class RoundRobinDispatcher extends JobDispatcher {
-    private final Random rand = new Random();
+    private int robinIndex = this.servers.size() - 1;
 
     public RoundRobinDispatcher(int k, boolean showViz) {
         super(k, showViz);
     }
 	public Server pickServer(Job j) {
-        return this.servers.get(rand.nextInt(this.servers.size())); 
+        robinIndex++;
+        robinIndex %= this.servers.size();
+        return this.servers.get(robinIndex);
     }
 }
