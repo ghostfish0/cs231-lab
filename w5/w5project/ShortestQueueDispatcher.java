@@ -14,9 +14,9 @@ public class ShortestQueueDispatcher extends JobDispatcher {
 		for (int i = 0; i < this.servers.size(); i++) {
 			queueSizes[i] = this.servers.get(i).size();
 		}
-		for (int i : queueSizes)
-			System.out.print(i + " ");
-        System.out.println("");
+		//for (int i : queueSizes)
+		//	System.out.print(i + " ");
+		//      System.out.println("");
 		for (int i = 0; i < this.servers.size(); i++) {
 			if (queueSizes[i] < queueSizes[index])
 				index = i;

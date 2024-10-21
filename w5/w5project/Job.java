@@ -20,6 +20,7 @@ System.out.println(job.isFinished()) // This prints true, as the job is now done
 
 System.out.println(job.timeInQueue()) // This prints 5, as the job arrived at time 1 and finished at time 6. 
 */
+import java.util.ArrayList;
 
 public class Job {
 
@@ -63,8 +64,9 @@ public class Job {
 	}
 
 	public String toString() {
-		return "[Arrival: " + arrivalTime + ", Finish: " + finishTime + ", Time Needed: " + processingTimeNeeded
-				+ ", Time Spent: " + processingTimeSpent + "]";
+		String str =  "[Arrival: " + arrivalTime + ", Finish: " + finishTime + ", Time Needed: " + processingTimeNeeded
+				+ ", Time in queue: " + (finishTime - arrivalTime) + "]";
+        return str;
 	}
 
 }

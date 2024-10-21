@@ -15,33 +15,34 @@ public class ServerFarmSimulation {
         int meanProcessingTime = 100;
 
         // Debugging settings
-        int numServers = 4; // Numbers of servers in the farm
-        int numJobs = 10; // Number of jobs to process
-        boolean showViz = true; // Set to true to see the visualization, and false to run your experiments
+        //int numServers = 4; // Numbers of servers in the farm
+        //int numJobs = 100; // Number of jobs to process
+        //boolean showViz = true; // Set to true to see the visualization, and false to run your experiments
         // to speed up the display, you can decrease the sleep time in the ServerFarmViz class.
 
         // Main experiment settings
-        /**
-         * int numServers = 34 ; //Numbers of servers in the farm
-         * int numJobs = 10000000 ; //Number of jobs to process
-         * boolean showViz = false ; //Set to true to see the visualization, and false
-         * to run your experiments
-         */
-
-        String dispatcherType = "shortest"; // Which jobDispatcher to use
+        
+          int numServers = 34 ; //Numbers of servers in the farm
+          int numJobs = 10000000 ; //Number of jobs to process
+          boolean showViz = false ; //Set to true to see the visualization, and false to run your experiments
+         
+        String dispatcherType = "round"; // Which jobDispatcher to use
+        if (args.length > 0) {
+            dispatcherType = args[0];
+        }
 
         // Initialize the job maker with the mean arrival and processing time
         JobMaker jobMaker = new JobMaker(meanArrivalTime, meanProcessingTime);
 
         // Create a dispatcher of the appropriate type
         JobDispatcher dispatcher = null;
-        if (dispatcherType == "random") {
+        if (dispatcherType.equals("random")) {
             dispatcher = new RandomDispatcher(numServers, showViz);
-        } else if (dispatcherType == "round") {
+        } else if (dispatcherType.equals("round")) {
             dispatcher = new RoundRobinDispatcher(numServers, showViz);
-        } else if (dispatcherType == "shortest") {
+        } else if (dispatcherType.equals("shortest")) {
             dispatcher = new ShortestQueueDispatcher(numServers, showViz);
-        } else if (dispatcherType == "least") {
+        } else if (dispatcherType.equals("least")) {
             dispatcher = new LeastWorkDispatcher(numServers, showViz);
         }
 
@@ -53,7 +54,5 @@ public class ServerFarmSimulation {
 
         // Print out the mean processing time
         System.out.println("Dispatcher: " + dispatcherType + ", Avg. Wait time: " + dispatcher.getAverageWaitingTime());
-
     }
-
 }

@@ -134,7 +134,7 @@ public class ServerFarmViz {
     public void repaint() {
         if ( this.showViz ) {
             try {
-                Thread.sleep(5);
+                Thread.sleep(60);
             } catch (InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

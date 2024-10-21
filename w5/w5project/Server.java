@@ -7,6 +7,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Toolkit;
+import java.util.Queue;
+import java.util.LinkedList;
 
 public class Server {
 	private double sysTime;       // track system time
@@ -21,40 +23,46 @@ public class Server {
 		this.jobsProcessed = 0;
 		this.jobs = new LinkedList<>();
 	}
+
+    public String toString() {
+        return "[systime: " + this.sysTime + ", remainingTime: " + this.remainingTime + ", jobs processed: " + this.jobsProcessed + ", size:" + this.size() + " & " + this.jobs.size();
+    }
+    
 	public void addJob(Job job) {
 		this.jobs.offer(job);
+        this.sysTime = job.getArrivalTime();
 		this.remainingTime += job.getProcessingTimeRemaining();
-        this.size++;
+		this.size++;
 	}
 	public void processTo(double time) {
-		this.sysTime += time;
-		double timeLeft = this.sysTime - time;
+		double timeLeft = time - this.sysTime;
 		while (timeLeft > 0) {
-			if (this.jobs.size() <= 0)
+			if (this.jobs.peek() == null)
 				return;
 			Job curr = this.jobs.peek();
 			double currTimeRequired = curr.getProcessingTimeRemaining();
-			if (timeLeft > currTimeRequired) { // more time than needed
-				curr.process(this.sysTime, currTimeRequired);
+			if (timeLeft >= currTimeRequired) { // more time than needed
+				curr.process(currTimeRequired, this.sysTime);
 				this.sysTime += currTimeRequired;
 				this.remainingTime -= currTimeRequired;
 				timeLeft -= currTimeRequired;
 				this.jobsProcessed++;
 				this.size--;
 				this.jobs.poll();
-			} else { // less than or exactly as much time as needed
-				curr.process(this.sysTime, timeLeft);
+			} else { // less than needed
+				curr.process(timeLeft, this.sysTime);
 				this.sysTime += timeLeft;
 				this.remainingTime -= timeLeft;
 				timeLeft = 0;
-				if (curr.isFinished()) {
-					this.jobsProcessed++;
-					this.size--;
-					this.jobs.poll();
-				}
+				//if (curr.isFinished()) {
+				//	this.jobsProcessed++;
+				//	this.size--;
+				//	this.jobs.poll();
+				//}
 			}
 		}
 	}
+
 	public double remainingWorkInQueue() { return this.remainingTime; }
 	public int size() { return this.size; }
 	public void draw(Graphics g, Color c, double loc, int numberOfServers) {
