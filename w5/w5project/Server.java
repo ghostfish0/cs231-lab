@@ -37,8 +37,10 @@ public class Server {
 	public void processTo(double time) {
 		double timeLeft = time - this.sysTime;
 		while (timeLeft > 0) {
-			if (this.jobs.peek() == null)
-				return;
+			if (this.jobs.peek() == null) {
+                this.sysTime = time;
+                return;
+            }
 			Job curr = this.jobs.peek();
 			double currTimeRequired = curr.getProcessingTimeRemaining();
 			if (timeLeft >= currTimeRequired) { // more time than needed
@@ -54,11 +56,6 @@ public class Server {
 				this.sysTime += timeLeft;
 				this.remainingTime -= timeLeft;
 				timeLeft = 0;
-				//if (curr.isFinished()) {
-				//	this.jobsProcessed++;
-				//	this.size--;
-				//	this.jobs.poll();
-				//}
 			}
 		}
 	}
