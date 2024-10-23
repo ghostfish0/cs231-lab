@@ -23,7 +23,7 @@ public class ServerFarmSimulation {
 		// Main experiment settings
 
 		int numServers = 34;     // Numbers of servers in the farm
-		int numJobs = 10000000;  // Number of jobs to process
+		int numJobs = 100000;  // Number of jobs to process
 		boolean showViz = false; // Set to true to see the visualization, and false to run your experiments
 
 		//String dispatcherType = "round"; // Which jobDispatcher to use

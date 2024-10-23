@@ -37,7 +37,7 @@ public abstract class JobDispatcher {
         dispatchJob(job);
     }
 	public void dispatchJob(Job job) {
-		this.jobsDispatched.add(job);
+		this.jobsDispatched.offer(job);
 		this.sysTime = job.getArrivalTime();
         this.advanceTimeTo(this.sysTime);
 		this.viz.repaint();
@@ -59,8 +59,9 @@ public abstract class JobDispatcher {
 	public double getAverageWaitingTime() {
 		int cnt = 0;
 		for (Job j : this.jobsDispatched) {
+            if (!j.isFinished())
+                System.out.println(j);
 			cnt += j.timeInQueue() - j.getProcessingTimeNeeded();
-            //System.out.println(j);
 		}
 		return (double)cnt / this.getNumJobsHandled();
 	}

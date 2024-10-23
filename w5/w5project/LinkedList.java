@@ -57,12 +57,12 @@ public class LinkedList<T> implements Iterable<T>, Queue<T> {
 	}
 	public Iterator<T> iterator() { return new LLIterator(this.head); }
 	public int size() { return this.size; }
-	public void clear() {
+	private void clear() {
 		this.head = null;
 		this.tail = null;
 		this.size = 0;
 	}
-	public boolean isEmpty() { return (this.head == null && this.tail == null && this.size == 0); }
+	public boolean isEmpty() { return (this.size == 0); }
 	public String toString() {
 		if (isEmpty())
 			return null;
@@ -74,13 +74,13 @@ public class LinkedList<T> implements Iterable<T>, Queue<T> {
 		}
 		return str;
 	}
-	public void add(T item) {
+	private void add(T item) {
 		Node<T> newNode = new Node<T>(item, head);
 		this.head = newNode;
 		this.tail = (this.tail == null ? newNode : this.tail);
 		this.size++;
 	}
-	public void add(int index, T item) {
+	private void add(int index, T item) {
 		if (index < 0 || index > this.size)
 			return;
 		if (index == 0) {
@@ -100,26 +100,27 @@ public class LinkedList<T> implements Iterable<T>, Queue<T> {
 		this.size++;
 	}
 
-	public void addFirst(T item) {
+	private void addFirst(T item) {
 		this.head = new Node<>(item, this.head);
 		size++;
 	}
-	public void addLast(T item) {
+	private void addLast(T item) {
 		Node<T> tail_ = new Node<T>(item);
 		if (this.tail == null) {
 			this.head = this.tail = tail_;
+            size++;
 			return;
 		}
 		this.tail.next = tail_;
 		this.tail = tail_;
 		size++;
 	}
-	public T getLast() {
+	private T getLast() {
 		if (this.tail == null)
 			return null;
 		return this.tail.getData();
 	}
-	public boolean contains(Object o) {
+	private boolean contains(Object o) {
 		Node<T> current = this.head;
 		while (current != null) {
 			T item = current.getData();
@@ -129,7 +130,7 @@ public class LinkedList<T> implements Iterable<T>, Queue<T> {
 		}
 		return false;
 	}
-	public T get(int index) {
+	private T get(int index) {
 		if (index < 0 || index >= this.size)
 			return null;
 		if (index == 0)
@@ -138,7 +139,7 @@ public class LinkedList<T> implements Iterable<T>, Queue<T> {
 			return getLast();
 		return this.head.getNext(index).getData();
 	}
-	public T remove() {
+	private T remove() {
 		if (this.head == null) {
 			return null; // or throw an exception if preferred
 		}
@@ -150,7 +151,7 @@ public class LinkedList<T> implements Iterable<T>, Queue<T> {
 		size--;
 		return data;
 	}
-	public T remove(int index) {
+	private T remove(int index) {
 		if (index < 0 || index >= size) {
 			throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
 		}
@@ -166,7 +167,7 @@ public class LinkedList<T> implements Iterable<T>, Queue<T> {
 		size--;
 		return data;
 	}
-	public T removeLast() { return this.remove(this.size - 1); }
+	private T removeLast() { return this.remove(this.size - 1); }
 
 	public boolean equals(Object o) {
 		if (!(o instanceof LinkedList)) {
