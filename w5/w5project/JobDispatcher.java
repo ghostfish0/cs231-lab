@@ -8,7 +8,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 public abstract class JobDispatcher {
 	private double sysTime;

@@ -7,8 +7,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Toolkit;
-import java.util.Queue;
-import java.util.LinkedList;
 
 public class Server {
 	private double sysTime;       // track system time

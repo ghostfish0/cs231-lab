@@ -3,7 +3,6 @@ file name:      ShortestQueueDispatcher.java
 Authors:        Tin Nguyen
 last modified:  10/11/2024
 */
-import java.util.ArrayList;
 
 public class ShortestQueueDispatcher extends JobDispatcher {
 
