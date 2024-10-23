@@ -51,8 +51,7 @@ public class Board {
 
 	public boolean addCell(int row, int col, int value) {
 		if ((value < 0 || value > 9) || (row < 0 || row >= this.getRows() || col < 0 || col >= this.getCols())) {
-			System.err.println("Board.addCell():: invalid row, col, or value; row: " + row +
-				   ", col: " + col + ", value: " + value);
+			System.err.println("Board.addCell():: invalid row, col, or value; row: " + row + ", col: " + col + ", value: " + value);
 			return false;
 		}
 		if (this.board[row][col] != null) {
